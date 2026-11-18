@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Check your English Level</title>
+<style>
+:root{
+  --navy:#06142b; --navy2:#0b2347; --gold:#d4a73a; --gold2:#f1d37a; --text:#eef3fb; --muted:#9db1cf; --red:#c8102e;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:radial-gradient(ellipse at 50% 0%,var(--navy2),var(--navy) 70%);color:var(--text);
+  font-family:'Oswald','Arial Narrow',Arial,sans-serif;display:flex;flex-direction:column;min-height:100vh;overflow-x:hidden}
+.compass{position:fixed;left:50%;top:42%;width:min(95vw,700px);transform:translate(-50%,-50%);opacity:.07;z-index:0;animation:spin 120s linear infinite}
+@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+main{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:28px 18px 120px;text-align:center}
+.logo{width:110px;height:110px;filter:drop-shadow(0 0 18px rgba(212,167,58,.45));animation:float 5s ease-in-out infinite}
+.logo img{width:100%;height:100%;object-fit:contain}
+@keyframes float{50%{transform:translateY(-8px)}}
+h1{margin:0;font-size:clamp(2rem,7vw,4rem);letter-spacing:.08em;text-transform:uppercase;font-weight:700;
+  background:linear-gradient(90deg,var(--gold),var(--gold2),var(--gold));background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 4s linear infinite}
+@keyframes shine{to{background-position:200% center}}
+.sub{color:var(--muted);letter-spacing:.3em;font-size:.85rem;text-transform:uppercase;margin-top:-10px}
+.stripe{width:min(420px,80%);height:4px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.btns{display:flex;flex-direction:column;align-items:center;gap:20px;width:100%}
+button.step{font-family:inherit;cursor:pointer;border:2px solid var(--gold);color:var(--text);text-transform:uppercase;letter-spacing:.15em;
+  border-radius:14px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
+button.step:hover{transform:translateY(-3px) scale(1.02)}
+button.step:active{transform:scale(.98)}
+#s1{width:min(340px,90%);padding:22px;font-size:1.6rem;background:linear-gradient(180deg,#14346a,#0c2550);box-shadow:0 0 0 0 rgba(212,167,58,.5);animation:pulse 2.4s infinite}
+#s2{width:min(480px,95%);padding:34px 20px;font-size:2.3rem;font-weight:700;background:linear-gradient(180deg,var(--gold2),var(--gold));color:var(--navy);border-color:#fff3c4}
+#s2.locked{background:linear-gradient(180deg,#2a3650,#1b243a);color:var(--muted);border-color:#3b4a6b}
+#s2 small{display:block;font-size:.8rem;letter-spacing:.2em;font-weight:400;margin-top:6px}
+#bar{position:absolute;left:0;bottom:0;height:6px;background:var(--gold);width:0;transition:width .5s linear}
+@keyframes pulse{70%{box-shadow:0 0 0 18px rgba(212,167,58,0)}100%{box-shadow:0 0 0 0 rgba(212,167,58,0)}}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.shake{animation:shake .4s}
+.waves{position:fixed;left:0;right:0;bottom:56px;height:70px;z-index:0;pointer-events:none;overflow:hidden}
+.waves svg{position:absolute;width:200%;height:100%;animation:wave 9s linear infinite}
+.waves svg:nth-child(2){animation-duration:14s;opacity:.5;bottom:-6px}
+@keyframes wave{to{transform:translateX(-50%)}}
+footer{position:relative;z-index:2;background:#030b19;border-top:2px solid var(--gold);padding:14px 16px;text-align:center;color:var(--muted);font-size:.85rem;letter-spacing:.12em;
+  padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))}
+footer b{color:var(--gold)}
+.notice{max-width:520px;font-family:Arial,sans-serif;font-size:.9rem;line-height:1.5;color:var(--muted);border:1px solid rgba(212,167,58,.4);border-radius:10px;padding:10px 14px;background:rgba(212,167,58,.07)}
+.notice.bad{color:#fff;border-color:var(--red);background:rgba(200,16,46,.25)}
+body.blocked button.step{opacity:.55;filter:grayscale(.6);animation:none}
+.modal{position:fixed;inset:0;background:rgba(3,11,25,.8);display:none;align-items:center;justify-content:center;z-index:10;padding:18px}
+.modal.on{display:flex}
+.box{background:var(--navy2);border:2px solid var(--gold);border-radius:16px;max-width:460px;padding:26px;text-align:center;animation:pop .3s}
+@keyframes pop{from{transform:scale(.8);opacity:0}}
+.box h2{margin:0 0 10px;color:var(--gold);letter-spacing:.1em}
+.box p{font-family:Arial,sans-serif;line-height:1.5;margin:8px 0}
+.box .t{font-size:2rem;color:var(--gold2);font-weight:700}
+.box button{margin-top:12px;padding:10px 26px;font-family:inherit;font-size:1rem;letter-spacing:.1em;border-radius:10px;border:0;background:var(--gold);color:var(--navy);cursor:pointer}
+</style>
+</head>
+<body>
+<!-- Rotating compass rose background -->
+<svg class="compass" viewBox="-100 -100 200 200" fill="none" stroke="#d4a73a" stroke-width=".6">
+  <circle r="95"/><circle r="80"/><circle r="45"/>
+  <path d="M0-95L8 0 0 95-8 0Z M-95 0L0 8 95 0 0-8Z" fill="#d4a73a" fill-opacity=".5"/>
+  <path d="M-67-67L5 0 67 67-5 0Z M67-67L0 5-67 67 0-5Z" stroke-opacity=".6"/>
+</svg>
+
+<main>
+  <div class="logo">
+    <!-- LOGO: src loads the logo from the URL above; if it fails, data-fb (a placeholder emblem) is shown. For best reliability, download the logo and use a local file (src="logo-armada.png") instead of hotlinking. Original note: replace the src below with the official Armada de Colombia logo (a local file like "logo-armada.png" or a base64 data URI).
+         Remote images are blocked on hosted pages, so embed it. The SVG below is only a placeholder emblem. -->
+    <img id="logo" alt="Armada de Colombia" src="https://romanosmilitar.com/wp-content/uploads/2025/04/ARMADA-NACIONAL.png" onerror="this.onerror=null;this.src=this.dataset.fb" data-fb="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='%23d4a73a' stroke-width='4' stroke-linecap='round'%3E%3Ccircle cx='50' cy='50' r='46'/%3E%3Ccircle cx='50' cy='22' r='7'/%3E%3Cpath d='M50 29v52M36 44h28M24 62c2 14 14 20 26 20s24-6 26-20M24 62l-6 4M76 62l6 4'/%3E%3C/svg%3E">
+  </div>
+  <h1>Check your English Level</h1>
+  <div class="sub">Armada de Colombia · Naval English Program</div>
+  <div class="stripe"></div>
+  <div class="notice" id="notice">🖥️ <b>Laptop or desktop computer required.</b> The tutorial and the test only run on large screens.<br>🖥️ <b>Se requiere un computador portátil o de escritorio.</b> El tutorial y la prueba solo funcionan en pantallas grandes.</div>
+
+  <div class="btns">
+    <button class="step" id="s1">⚓ Step 1</button>
+    <div id="fb" style="display:none;font-family:Arial,sans-serif;color:var(--muted)">Your browser blocked the pop-up. <a id="fbLink" href="https://jcraiz.github.io/ESFIMtutorial/" target="_blank" rel="noopener" style="color:var(--gold2);font-weight:700">Click here to open the tutorial</a> (the timer starts when you do).</div>
+    <button class="step locked" id="s2">
+      Step 2
+      <small id="s2label">Complete Step 1 first</small>
+      <span id="bar"></span>
+    </button>
+  </div>
+</main>
+
+<div class="waves" aria-hidden="true">
+  <svg viewBox="0 0 1200 70" preserveAspectRatio="none"><path d="M0 35Q150 5 300 35T600 35T900 35T1200 35V70H0Z" fill="#12356b"/></svg>
+  <svg viewBox="0 0 1200 70" preserveAspectRatio="none"><path d="M0 40Q150 15 300 40T600 40T900 40T1200 40V70H0Z" fill="#1d4d93"/></svg>
+</div>
+
+<footer>Powered by the <b>Colombian Navy</b>. &nbsp;·&nbsp; Copyright © 2026</footer>
+
+<div class="modal" id="modal">
+  <div class="box">
+    <h2>⚓ ¡Alto ahí, marinero! / Hold it, sailor!</h2>
+    <p>🇨🇴 ¡Ni el mejor capitán llega a puerto sin navegar! Vuelve al tutorial: tu inglés todavía está en dique seco.</p>
+    <p>🇬🇧 Even the best captain can't reach port without sailing. Get back to the tutorial: your English is still in dry dock.</p>
+    <p>⏱ <span class="t" id="left">10:00</span></p>
+    <button id="ok">Aye aye, Captain!</button>
+  </div>
+</div>
+
+<div class="modal" id="devModal">
+  <div class="box">
+    <h2>📱 → 🖥️ Larger screen needed</h2>
+    <p>🇬🇧 This device is too small for the tutorial and the test. Please come back from a laptop or desktop computer.</p>
+    <p>🇨🇴 Este dispositivo es muy pequeño para el tutorial y la prueba. Por favor regresa desde un computador portátil o de escritorio.</p>
+    <button id="devOk">Understood / Entendido</button>
+  </div>
+</div>
+
+<script>
+const TUTORIAL_URL = "https://jcraiz.github.io/ESFIMtutorial/";
+// Step 2 test link (change it here if the address ever changes)
+const STEP2_URL = "https://cadministrativocien.github.io/examennov2026/";
+const REQUIRED_MS = 10 * 60 * 1000;
+
+// ---- Device check: phones, tablets and small windows cannot open the tutorial or the test ----
+const MIN_WIDTH = 900; // px; change if you want a different threshold
+function isBlocked(){
+  const ua = /Android|iPhone|iPad|iPod|Mobile|Tablet|Silk|Kindle|Opera Mini|IEMobile/i.test(navigator.userAgent);
+  const ipadOS = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1; // iPads posing as Macs
+  const touchOnly = matchMedia('(pointer:coarse)').matches && !matchMedia('(hover:hover)').matches;
+  return ua || ipadOS || touchOnly || window.innerWidth < MIN_WIDTH;
+}
+function applyDeviceState(){
+  const b = isBlocked();
+  document.body.classList.toggle('blocked', b);
+  document.getElementById('notice').classList.toggle('bad', b);
+  return b;
+}
+applyDeviceState();
+addEventListener('resize', applyDeviceState);
+document.getElementById('devOk').onclick = () => document.getElementById('devModal').classList.remove('on');
+function denyDevice(){ document.getElementById('devModal').classList.add('on'); }
+
+const s1 = document.getElementById('s1'), s2 = document.getElementById('s2');
+const label = document.getElementById('s2label'), bar = document.getElementById('bar');
+const modal = document.getElementById('modal'), left = document.getElementById('left');
+let startedAt = null, tutorialWin = null, tick = null;
+
+// Optional: remember the start time if the page is reloaded (storage may be unavailable)
+try { const v = localStorage.getItem('esfim_start'); if (v) startedAt = +v; } catch(e){}
+if (startedAt) runTimer();
+
+const fmt = ms => { const s = Math.max(0, Math.ceil(ms/1000)); return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); };
+const remaining = () => startedAt ? REQUIRED_MS - (Date.now() - startedAt) : REQUIRED_MS;
+
+const fb = document.getElementById('fb');
+function startTimer(){
+  if (!startedAt) {
+    startedAt = Date.now();
+    try { localStorage.setItem('esfim_start', startedAt); } catch(e){}
+    runTimer();
+  }
+}
+s1.addEventListener('click', () => {
+  if (applyDeviceState()) return denyDevice();
+  tutorialWin = window.open(TUTORIAL_URL, '_blank');
+  if (tutorialWin) { fb.style.display = 'none'; startTimer(); }
+  else { fb.style.display = 'block'; } // pop-up blocked: show a direct link instead
+});
+document.getElementById('fbLink').addEventListener('click', startTimer);
+
+function runTimer(){
+  clearInterval(tick);
+  const update = () => {
+    const r = remaining();
+    bar.style.width = Math.min(100, (1 - r/REQUIRED_MS) * 100) + '%';
+    if (r <= 0) { s2.classList.remove('locked'); label.textContent = 'Ready — start the test'; clearInterval(tick); }
+    else { s2.classList.add('locked'); label.textContent = '🔒 Unlocks in ' + fmt(r); }
+    left.textContent = fmt(r);
+  };
+  update(); tick = setInterval(update, 1000);
+}
+
+s2.addEventListener('click', () => {
+  if (applyDeviceState()) return denyDevice();
+  if (!startedAt || remaining() > 0) {
+    left.textContent = fmt(remaining());
+    modal.classList.add('on');
+    s2.classList.remove('shake'); void s2.offsetWidth; s2.classList.add('shake');
+    return;
+  }
+  // 1. Reset the timer
+  startedAt = null; clearInterval(tick);
+  try { localStorage.removeItem('esfim_start'); } catch(e){}
+  bar.style.width = '0'; s2.classList.add('locked'); label.textContent = 'Complete Step 1 first';
+  // 2. Launch the test window
+  if (STEP2_URL) window.open(STEP2_URL, '_blank');
+  // 3. Close the interaction window (tutorial tab, then this one)
+  try { if (tutorialWin && !tutorialWin.closed) tutorialWin.close(); } catch(e){}
+  window.close(); // only works if this page was opened by a script; otherwise show a farewell
+  setTimeout(() => {
+    document.querySelector('main').innerHTML = '<h1>Good luck!</h1><div class="sub">You may close this window · Puede cerrar esta ventana</div>';
+  }, 300);
+});
+
+document.getElementById('ok').onclick = () => modal.classList.remove('on');
+modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('on'); });
+</script>
+</body>
+</html>
